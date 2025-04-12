@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid de Videos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+
+        .video-grid {
+            display: grid;
+            gap: 0; /* Sin espacios entre los videos */
+            width: 100vw; /* Ocupa todo el ancho de la pantalla */
+            height: 100vh; /* Ocupa todo el alto de la pantalla */
+        }
+
+        .video-container {
+            position: relative;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 16 / 9;
+            border: none;
+        }
+
+        .remove-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .controls {
+            margin: 10px;
+        }
+
+        input {
+            width: 300px;
+            padding: 5px;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <input type="text" id="iframeInput" placeholder="Pega aquí el código del iframe">
+        <button onclick="addIframe()">Agregar Iframe</button>
+    </div>
+    <div class="video-grid" id="videoGrid"></div>
+
+    <script>
+        // Cargar los iframes desde localStorage
+        function loadIframes() {
+            const videoGrid = document.getElementById('videoGrid');
+            const savedIframes = JSON.parse(localStorage.getItem('iframes')) || [];
+            videoGrid.innerHTML = ''; // Limpia el grid
+            savedIframes.forEach((iframeHTML, index) => {
+                const container = document.createElement('div');
+                container.classList.add('video-container');
+                container.innerHTML = `
+                    ${iframeHTML}
+                    <button class="remove-button" onclick="removeIframe(${index})">X</button>
+                `;
+                videoGrid.appendChild(container);
+            });
+            adjustGrid();
+        }
+
+        // Agregar un nuevo iframe
+        function addIframe() {
+            const iframeInput = document.getElementById('iframeInput');
+            const iframeHTML = iframeInput.value.trim();
+            if (!iframeHTML) {
+                alert('Por favor, ingresa un código de iframe válido.');
+                return;
+            }
+
+            // Guardar el iframe en localStorage
+            const savedIframes = JSON.parse(localStorage.getItem('iframes')) || [];
+            savedIframes.push(iframeHTML);
+            localStorage.setItem('iframes', JSON.stringify(savedIframes));
+
+            // Recargar los iframes
+            loadIframes();
+            iframeInput.value = ''; // Limpiar el input
+        }
+
+        // Eliminar un iframe
+        function removeIframe(index) {
+            const savedIframes = JSON.parse(localStorage.getItem('iframes')) || [];
+            savedIframes.splice(index, 1); // Elimina el iframe del array
+            localStorage.setItem('iframes', JSON.stringify(savedIframes)); // Actualiza localStorage
+            loadIframes(); // Recarga los iframes
+        }
+
+        // Ajustar el grid dinámicamente
+        function adjustGrid() {
+            const videoGrid = document.getElementById('videoGrid');
+            const iframes = videoGrid.getElementsByClassName('video-container');
+            const numVideos = iframes.length;
+
+            // Calcula el número de columnas y filas
+            let columns = Math.ceil(Math.sqrt(numVideos)); // Número de columnas basado en la raíz cuadrada
+            let rows = Math.ceil(numVideos / columns); // Calcula las filas necesarias
+
+            // Ajusta el grid
+            videoGrid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+            videoGrid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+        }
+
+        // Ajusta el grid al cargar la página y al redimensionar la ventana
+        window.addEventListener('load', () => {
+            loadIframes();
+            adjustGrid();
+        });
+        window.addEventListener('resize', adjustGrid);
+    </script>
+</body>
+</html>
