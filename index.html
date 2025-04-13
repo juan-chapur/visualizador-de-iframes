@@ -85,13 +85,24 @@
             adjustGrid();
         }
 
-        // Agregar un nuevo iframe
+        // Agregar un nuevo iframe con autoplay
         function addIframe() {
             const iframeInput = document.getElementById('iframeInput');
-            const iframeHTML = iframeInput.value.trim();
+            let iframeHTML = iframeInput.value.trim();
             if (!iframeHTML) {
                 alert('Por favor, ingresa un código de iframe válido.');
                 return;
+            }
+
+            // Detectar y agregar autoplay al atributo src del iframe
+            const srcRegex = /src="([^"]+)"/;
+            const match = iframeHTML.match(srcRegex);
+            if (match) {
+                let src = match[1];
+                if (!src.includes('autoplay=1')) {
+                    src += (src.includes('?') ? '&' : '?') + 'autoplay=1&mute=1';
+                    iframeHTML = iframeHTML.replace(srcRegex, `src="${src}"`);
+                }
             }
 
             // Guardar el iframe en localStorage

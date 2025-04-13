@@ -35,3 +35,9 @@ Este proyecto es una aplicación web que permite agregar, visualizar y eliminar 
   - Si hay 4 videos, se organizan en 2 filas y 2 columnas.
   - Si hay 6 videos, se organizan en 2 filas y 3 columnas.
 - El diseño se adapta automáticamente al tamaño de la pantalla.
+
+## Despliegue
+
+El proyecto está desplegado y disponible en el siguiente enlace:
+
+[https://juan-chapur.github.io/visualizador-de-iframes/](https://juan-chapur.github.io/visualizador-de-iframes/)
